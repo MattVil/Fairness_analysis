@@ -48,3 +48,5 @@ if __name__ == '__main__':
     x_train, x_valid, x_test = load_data()
     print(x_train)
     print_dataset_infos(x_train)
+    print("\n### Original training data ###")
+    print("Difference in mean outcomes between unprivileged and privileged groups = %f" % get_metrics(x_train))

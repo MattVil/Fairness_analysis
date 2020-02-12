@@ -1,6 +1,7 @@
 import pandas as pd
 
 from aif360.datasets import AdultDataset
+from aif360.metrics import BinaryLabelDatasetMetric
 from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
 from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
 
@@ -23,6 +24,12 @@ def loadData():
         "dlist": [.1, 0.05, 0]
     }
     return privileged_groups, unprivileged_groups, optim_options, dataset_orig
+
+def get_metrics(dataset_train):
+    metric_orig_train = BinaryLabelDatasetMetric(dataset_train, 
+                                                unprivileged_groups=unprivileged_groups,
+                                                privileged_groups=privileged_groups)
+    print("Difference in mean outcomes between unprivileged and privileged groups = %f" % metric_orig_train.mean_difference())
 
 if __name__ == '__main__':
     privileged_groups, unprivileged_groups, optim_options, data = loadData()

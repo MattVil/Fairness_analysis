@@ -2,8 +2,10 @@ import pandas as pd
 
 from aif360.datasets import AdultDataset
 from aif360.metrics import BinaryLabelDatasetMetric
+from aif360.algorithms.preprocessing.optim_preproc import OptimPreproc
 from aif360.algorithms.preprocessing.optim_preproc_helpers.data_preproc_functions import load_preproc_data_adult
 from aif360.algorithms.preprocessing.optim_preproc_helpers.distortion_functions import get_distortion_adult
+from aif360.algorithms.preprocessing.optim_preproc_helpers.opt_tools import OptTools
 
 privileged_groups = [{'sex': 1}]
 unprivileged_groups = [{'sex': 0}]
@@ -44,9 +46,24 @@ def get_metrics(dataset_train):
     #print("Difference in mean outcomes between unprivileged and privileged groups = %f" % metric_orig_train.mean_difference())
     return metric_orig_train.mean_difference()
 
+def optim_transform_data(dataset):
+    OP = OptimPreproc(OptTools, optim_options, unprivileged_groups = unprivileged_groups, privileged_groups = privileged_groups)
+    OP = OP.fit(dataset)
+
+    # Transform training data and align features
+    dataset_transf = OP.transform(dataset, transform_Y=True)
+    dataset_transf = dataset.align_datasets(dataset_transf)
+
+    return dataset_transf
+
 if __name__ == '__main__':
     x_train, x_valid, x_test = load_data()
     print(x_train)
     print_dataset_infos(x_train)
     print("\n### Original training data ###")
     print("Difference in mean outcomes between unprivileged and privileged groups = %f" % get_metrics(x_train))
+    print("\n### Optimizing dataset ###")
+    optim_x_train = optim_transform_data(x_train)
+    print("\n### Transformed training data ###")
+    print("Difference in mean outcomes between unprivileged and privileged groups = %f" % get_metrics(optim_x_train))
+    

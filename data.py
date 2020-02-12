@@ -41,7 +41,8 @@ def get_metrics(dataset_train):
     metric_orig_train = BinaryLabelDatasetMetric(dataset_train, 
                                                 unprivileged_groups=unprivileged_groups,
                                                 privileged_groups=privileged_groups)
-    print("Difference in mean outcomes between unprivileged and privileged groups = %f" % metric_orig_train.mean_difference())
+    #print("Difference in mean outcomes between unprivileged and privileged groups = %f" % metric_orig_train.mean_difference())
+    return metric_orig_train.mean_difference()
 
 if __name__ == '__main__':
     x_train, x_valid, x_test = load_data()
